@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect,useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button, Image, Platform, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ms, mvs, s, vs } from 'react-native-size-matters';
 import colors from '../../templates/colors';
@@ -8,6 +8,8 @@ import VideoRecorder from 'react-native-beautiful-video-recorder';
 import { RNCamera } from 'react-native-camera';
 
 const VideoKYC = props => {
+    const [Image_data, setImage_data] = useState('');
+
     useEffect(() => {
         console.log('This will run every dashjkjcjkxcjkxjckjxkcj>>>>>>!');
     }, []);
@@ -18,14 +20,15 @@ const VideoKYC = props => {
         if (cameraRef && cameraRef.current) {
             cameraRef.current.open({ maxLength: 30 }, (data) => {
                 console.log('captured data', data); // data.uri is the file path
+                setImage_data(data.uri);
             });
         }
     }
 
     return (
         <>
-           <VideoRecorder ref={cameraRef} />
-             <StatusBar barStyle="light-content" />
+            <VideoRecorder ref={cameraRef} />
+            <StatusBar barStyle="light-content" />
             <View style={styles.container}>
 
 
@@ -69,38 +72,86 @@ const VideoKYC = props => {
                             marginRight: s(30)
 
                         }}>
-                            <Image
-                                source={require('../../assets/images/video-camera.png')}
-                                style={{ tintColor: colors.Gray_COLOR, height: s(54), width: s(54), alignContent: 'center', alignSelf: 'center' }}
-                            />
+                            {Image_data != '' && Image_data != null ?
+                                <Image
+                                    source={{
+                                        uri: Image_data
+                                    }}
+                                    style={{ backgroundColor: colors.Gray_COLOR, flex: 1, resizeMode: 'cover' }}
+                                ></Image> :
+                                <Image
+                                    source={require('../../assets/images/video-camera.png')}
+                                    style={{ tintColor: colors.Gray_COLOR, height: s(54), width: s(54), alignContent: 'center', alignSelf: 'center' }}
+                                />}
                         </View>
 
 
 
 
-                        <View style={{ flexDirection: 'row', flex: 1, marginLeft: s(20), marginRight: s(20), justifyContent: 'center', marginTop: s(30) }}>
-                            <TouchableOpacity
-                                onPress={() => {
-                                    videoRecord()
-                                }}>
-
-                                <View style={styles.short_button}>
-
-                                    <Text
-                                        style={{
-                                            color: colors.WHITE_COLOR,
-                                            marginLeft: s(5),
-                                            fontFamily: fonts('poppinsSemibold'),
-                                            fontSize: s(10)
-                                        }}>
-                                        {'Start Recoding'}
-                                    </Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
 
 
+                        {Image_data != '' && Image_data != null ?
+                            <View style={{ flexDirection: 'row', flex: 1, marginLeft: s(20), marginRight: s(20), justifyContent: 'center', marginTop: s(30) }}>
+                                <TouchableOpacity
+                                    style={styles.preview_button}
+                                    onPress={() => {
+                                        console.log('only check');
 
+                                    }}>
+                                    <View style={[styles.preview_button, { backgroundColor: colors.WHITE_COLOR, borderColor: colors.PRIMARY_COLOR, borderWidth: s(1) }]}>
+
+                                        <Text
+                                            style={{
+                                                color: colors.PRIMARY_COLOR,
+                                                marginLeft: s(5),
+                                                fontFamily: fonts('poppinsSemibold'),
+                                                fontSize: s(10)
+                                            }}>
+                                            {'Cancel'}
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={styles.preview_button}
+                                    onPress={() => {
+                                        console.log('only check');
+
+                                    }}>
+                                    <View style={styles.preview_button}>
+
+                                        <Text
+                                            style={{
+                                                color: colors.WHITE_COLOR,
+                                                marginLeft: s(5),
+                                                fontFamily: fonts('poppinsSemibold'),
+                                                fontSize: s(10)
+                                            }}>
+                                            {'Preview'}
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View> :
+                            <View style={{ flexDirection: 'row', flex: 1, marginLeft: s(20), marginRight: s(20), justifyContent: 'center', marginTop: s(30) }}>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        videoRecord()
+                                    }}>
+
+                                    <View style={styles.short_button}>
+
+                                        <Text
+                                            style={{
+                                                color: colors.WHITE_COLOR,
+                                                marginLeft: s(5),
+                                                fontFamily: fonts('poppinsSemibold'),
+                                                fontSize: s(10)
+                                            }}>
+                                            {'Start Recoding'}
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                        }
 
 
 
@@ -109,7 +160,7 @@ const VideoKYC = props => {
                     </View>
                 </ScrollView>
                 <TouchableOpacity
-                    style={styles.button}
+                    style={[styles.button, { backgroundColor: Image_data ? colors.BUTTON : colors.DARK_GRAY }]}
                     onPress={() => {
                         console.log('only check');
                     }}>
@@ -125,7 +176,7 @@ const VideoKYC = props => {
 
 
                 </TouchableOpacity>
-            </View>  
+            </View>
         </>
     );
 };
@@ -205,6 +256,21 @@ var styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: colors.RED,
+        borderRadius: s(20),
+        fontSize: s(12),
+        margin: s(10),
+        alignSelf: 'center',
+        fontFamily: fonts('poppinsSemibold'),
+    },
+    preview_button: {
+        textAlign: 'center',
+        alignContent: 'center',
+        height: s(30),
+        width: s(100),
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: colors.PRIMARY_COLOR,
         borderRadius: s(20),
         fontSize: s(12),
         margin: s(10),

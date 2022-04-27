@@ -1,12 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, Platform, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ms, mvs, s, vs } from 'react-native-size-matters';
 import colors from '../../templates/colors';
 import fonts from '../../utility/fonts';
 import DashedLine from 'react-native-dashed-line';
+import ImagePicker from 'react-native-image-crop-picker';
 
 const AadharCard = props => {
+    const [DefultImage, setDefultImage] = useState('');
+    const [Image_data, setImage_data] = useState('');
+    const [Front_Image_data, setFront_Image_data] = useState('');
+
     useEffect(() => {
         console.log('This will run every dashjkjcjkxcjkxjckjxkcj>>>>>>!');
 
@@ -14,7 +19,35 @@ const AadharCard = props => {
 
     }, []);
 
+    const render_image = () => {
 
+        if (Image_data != '' && Image_data != null) {
+            { console.log('if is working') }
+
+            return <Image
+                style={{
+                    borderColor: colors.Gray_COLOR,
+                    borderWidth: 0.5,
+                    height: s(50),
+                    flex: 1,
+                    justifyContent: 'center',
+                    marginTop: s(20),
+                    marginLeft: s(50),
+                    marginRight: s(50),
+                    backgroundColor: 'red',
+                    marginBottom: s(20)
+                }}
+                source={{
+                    uri: `data:image/jpeg;base64,${Image_data}`,
+                }}></Image>
+        }
+        else {
+            { console.log('if is not working') }
+            return;
+
+        }
+
+    }
 
     return (
         <>
@@ -61,75 +94,130 @@ const AadharCard = props => {
                             marginRight: s(30)
 
                         }}>
-
-                            <View style={{
-                                borderColor: colors.Gray_COLOR,
-                                borderWidth: 0.5,
-                                height: s(50),
-                                flex: 1,
-                                justifyContent: 'center',
-                                marginTop: s(20),
-                                marginLeft: s(50),
-                                marginRight: s(50),
-                                marginBottom: s(20)
-                            }}>
-                                <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                            {Front_Image_data != '' && Front_Image_data != null ?
+                                <View style={{
+                                    borderColor: colors.Gray_COLOR,
+                                    borderWidth: 0.5,
+                                    height: s(50),
+                                    flex: 1,
+                                    justifyContent: 'center',
+                                    marginTop: s(20),
+                                    marginLeft: s(50),
+                                    marginRight: s(50),
+                                    marginBottom: s(20)
+                                }}>
                                     <Image
-                                        source={require('../../assets/images/defult_user.png')}
-                                        style={{ tintColor: colors.Gray_COLOR, height: s(35), width: s(35), justifyContent: 'center', alignContent: 'center' }}
-                                    />
-                                    <View style={{ marginLeft: s(10) }}>
-                                        <View style={{ width: s(80), backgroundColor: colors.Gray_COLOR, height: s(1) }} />
-                                        <View style={{ width: s(80), backgroundColor: colors.Gray_COLOR, height: s(1), marginTop: s(10) }} />
-                                        <View style={{ width: s(80), backgroundColor: colors.Gray_COLOR, height: s(1), marginTop: s(10) }} />
+                                        source={{
+                                            uri: `data:image/jpeg;base64,${Front_Image_data}`
+                                        }}
+                                        style={{ backgroundColor: colors.Gray_COLOR, flex: 1, resizeMode: 'cover' }}
+                                    ></Image>
+                                </View>
+                                :
+                                <View style={{
+                                    borderColor: colors.Gray_COLOR,
+                                    borderWidth: 0.5,
+                                    height: s(50),
+                                    flex: 1,
+                                    justifyContent: 'center',
+                                    marginTop: s(20),
+                                    marginLeft: s(50),
+                                    marginRight: s(50),
+                                    marginBottom: s(20)
+                                }}>
 
-                                        <View style={{ flexDirection: 'row', marginTop: s(10) }}>
-                                            <View style={{ width: s(10), backgroundColor: colors.Gray_COLOR, height: s(1) }} />
-                                            <View style={{ width: s(40), backgroundColor: colors.Gray_COLOR, height: s(1), marginLeft: s(10) }} />
-                                            <View style={{ width: s(10), backgroundColor: colors.Gray_COLOR, height: s(1), marginLeft: s(10) }} />
+                                    <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                                        <Image
+                                            source={require('../../assets/images/defult_user.png')}
+                                            style={{ tintColor: colors.Gray_COLOR, height: s(35), width: s(35), justifyContent: 'center', alignContent: 'center' }}
+                                        />
+                                        <View style={{ marginLeft: s(10) }}>
+                                            <View style={{ width: s(80), backgroundColor: colors.Gray_COLOR, height: s(1) }} />
+                                            <View style={{ width: s(80), backgroundColor: colors.Gray_COLOR, height: s(1), marginTop: s(10) }} />
+                                            <View style={{ width: s(80), backgroundColor: colors.Gray_COLOR, height: s(1), marginTop: s(10) }} />
+
+                                            <View style={{ flexDirection: 'row', marginTop: s(10) }}>
+                                                <View style={{ width: s(10), backgroundColor: colors.Gray_COLOR, height: s(1) }} />
+                                                <View style={{ width: s(40), backgroundColor: colors.Gray_COLOR, height: s(1), marginLeft: s(10) }} />
+                                                <View style={{ width: s(10), backgroundColor: colors.Gray_COLOR, height: s(1), marginLeft: s(10) }} />
+                                            </View>
+
                                         </View>
 
                                     </View>
 
+                                </View>}
+
+                        </View>
+                        <View style={{ flexDirection: 'row', flex: 1, marginLeft: s(20), marginRight: s(20) }}>
+                            <TouchableOpacity
+                                style={styles.short_button}
+                                onPress={() => {
+                                    console.log('only check');
+                                    ImagePicker.openCamera({
+                                        width: 300,
+                                        height: 400,
+                                        cropping: true,
+                                        includeBase64: true
+                                    }).then(image => {
+                                        console.log(image);
+                                        setDefultImage(image?.path)
+                                        setFront_Image_data(image?.data)
+
+                                    });
+                                }}>
+                                <View style={styles.short_button}>
+                                    <Image
+                                        source={require('../../assets/images/camera.png')}
+                                        style={{ height: s(15), width: s(15), alignSelf: 'center', alignContent: 'center', tintColor: colors.WHITE_COLOR }}
+                                    />
+                                    <Text
+                                        style={{
+                                            color: colors.WHITE_COLOR,
+                                            marginLeft: s(5),
+                                            fontFamily: fonts('poppinsSemibold'),
+                                            fontSize: s(10)
+                                        }}>
+                                        {'Use mobile camera'}
+                                    </Text>
                                 </View>
-
-                            </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.short_button}
+                                onPress={() => {
+                                    console.log('only check');
+                                    ImagePicker.openPicker({
+                                        width: 300,
+                                        height: 400,
+                                        cropping: true,
+                                        includeBase64: true
+                                    }).then(image => {
+                                        // console.log("image>>", image);
+                                        console.log("image>>", image?.path);
+                                        setDefultImage(image?.path)
+                                        setFront_Image_data(image?.data)
+                                        // { render_image() }
+                                    });
+                                }}>
+                                <View style={styles.short_button}>
+                                    <Image
+                                        source={require('../../assets/images/camera.png')}
+                                        style={{ height: s(15), width: s(15), alignSelf: 'center', alignContent: 'center', tintColor: colors.WHITE_COLOR }}
+                                    />
+                                    <Text
+                                        style={{
+                                            color: colors.WHITE_COLOR,
+                                            marginLeft: s(5),
+                                            fontFamily: fonts('poppinsSemibold'),
+                                            fontSize: s(10)
+                                        }}>
+                                        {'Your photo gallery'}
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
                         </View>
-                        <View style={{ flexDirection: 'row', flex: 1 ,marginLeft:s(20),marginRight:s(20)}}>
 
-                            <View style={styles.short_button}>
-                                <Image
-                                    source={require('../../assets/images/camera.png')}
-                                    style={{ height: s(15), width: s(15), alignSelf: 'center', alignContent: 'center', tintColor: colors.WHITE_COLOR }}
-                                />
-                                <Text
-                                    style={{
-                                        color: colors.WHITE_COLOR,
-                                        marginLeft: s(5),
-                                        fontFamily: fonts('poppinsSemibold'),
-                                        fontSize: s(10)
-                                    }}>
-                                    {'Use mobile camera'}
-                                </Text>
-                            </View>
-                            <View style={styles.short_button}>
-                                <Image
-                                    source={require('../../assets/images/camera.png')}
-                                    style={{ height: s(15), width: s(15), alignSelf: 'center', alignContent: 'center', tintColor: colors.WHITE_COLOR }}
-                                />
-                                <Text
-                                    style={{
-                                        color: colors.WHITE_COLOR,
-                                        marginLeft: s(5),
-                                        fontFamily: fonts('poppinsSemibold'),
-                                        fontSize: s(10)
-                                    }}>
-                                    {'Your photo gallery'}
-                                </Text>
-                            </View>
-                        </View>
 
-                      
                         <Text style={{ justifyContent: 'center', alignSelf: 'center', fontSize: s(10), marginTop: s(25) }}>Back Image</Text>
 
                         <View style={{
@@ -143,72 +231,125 @@ const AadharCard = props => {
                             marginRight: s(30)
 
                         }}>
-
-                            <View style={{
-                                borderColor: colors.Gray_COLOR,
-                                borderWidth: 0.5,
-                                height: s(50),
-                                flex: 1,
-                                justifyContent: 'center',
-                                marginTop: s(20),
-                                marginLeft: s(50),
-                                marginRight: s(50),
-                                marginBottom: s(20)
-                            }}>
-                                <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                            {Image_data != '' && Image_data != null ?
+                                <View style={{
+                                    borderColor: colors.Gray_COLOR,
+                                    borderWidth: 0.5,
+                                    height: s(50),
+                                    flex: 1,
+                                    justifyContent: 'center',
+                                    marginTop: s(20),
+                                    marginLeft: s(50),
+                                    marginRight: s(50),
+                                    marginBottom: s(20)
+                                }}>
                                     <Image
-                                        source={require('../../assets/images/defult_user.png')}
-                                        style={{ tintColor: colors.Gray_COLOR, height: s(35), width: s(35), justifyContent: 'center', alignContent: 'center' }}
-                                    />
-                                    <View style={{ marginLeft: s(10) }}>
-                                        <View style={{ width: s(80), backgroundColor: colors.Gray_COLOR, height: s(1) }} />
-                                        <View style={{ width: s(80), backgroundColor: colors.Gray_COLOR, height: s(1), marginTop: s(10) }} />
-                                        <View style={{ width: s(80), backgroundColor: colors.Gray_COLOR, height: s(1), marginTop: s(10) }} />
+                                        source={{
+                                            uri: `data:image/jpeg;base64,${Image_data}`
+                                        }}
+                                        style={{ backgroundColor: colors.Gray_COLOR, flex: 1, resizeMode: 'cover' }}
+                                    ></Image>
+                                </View>
+                                :
+                                <View style={{
+                                    borderColor: colors.Gray_COLOR,
+                                    borderWidth: 0.5,
+                                    height: s(50),
+                                    flex: 1,
+                                    justifyContent: 'center',
+                                    marginTop: s(20),
+                                    marginLeft: s(50),
+                                    marginRight: s(50),
+                                    marginBottom: s(20)
+                                }}>
 
-                                        <View style={{ flexDirection: 'row', marginTop: s(10) }}>
-                                            <View style={{ width: s(10), backgroundColor: colors.Gray_COLOR, height: s(1) }} />
-                                            <View style={{ width: s(40), backgroundColor: colors.Gray_COLOR, height: s(1), marginLeft: s(10) }} />
-                                            <View style={{ width: s(10), backgroundColor: colors.Gray_COLOR, height: s(1), marginLeft: s(10) }} />
+                                    <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                                        <Image
+                                            source={require('../../assets/images/defult_user.png')}
+                                            style={{ tintColor: colors.Gray_COLOR, height: s(35), width: s(35), justifyContent: 'center', alignContent: 'center' }}
+                                        />
+                                        <View style={{ marginLeft: s(10) }}>
+                                            <View style={{ width: s(80), backgroundColor: colors.Gray_COLOR, height: s(1) }} />
+                                            <View style={{ width: s(80), backgroundColor: colors.Gray_COLOR, height: s(1), marginTop: s(10) }} />
+                                            <View style={{ width: s(80), backgroundColor: colors.Gray_COLOR, height: s(1), marginTop: s(10) }} />
+
+                                            <View style={{ flexDirection: 'row', marginTop: s(10) }}>
+                                                <View style={{ width: s(10), backgroundColor: colors.Gray_COLOR, height: s(1) }} />
+                                                <View style={{ width: s(40), backgroundColor: colors.Gray_COLOR, height: s(1), marginLeft: s(10) }} />
+                                                <View style={{ width: s(10), backgroundColor: colors.Gray_COLOR, height: s(1), marginLeft: s(10) }} />
+                                            </View>
+
                                         </View>
 
                                     </View>
 
-                                </View>
-
-                            </View>
+                                </View>}
                         </View>
-                        <View style={{ flexDirection: 'row', flex: 1,marginLeft:s(20),marginRight:s(20) }}>
+                        <View style={{ flexDirection: 'row', flex: 1, marginLeft: s(20), marginRight: s(20) }}>
+                            <TouchableOpacity
+                                style={styles.short_button}
+                                onPress={() => {
+                                    console.log('only check');
+                                    ImagePicker.openCamera({
+                                        width: 300,
+                                        height: 400,
+                                        cropping: true,
+                                        includeBase64: true
+                                    }).then(image => {
+                                        console.log(image);
+                                        setDefultImage(image?.path)
+                                        setImage_data(image?.data)
 
-                            <View style={styles.short_button}>
-                                <Image
-                                    source={require('../../assets/images/camera.png')}
-                                    style={{ height: s(15), width: s(15), alignSelf: 'center', alignContent: 'center', tintColor: colors.WHITE_COLOR }}
-                                />
-                                <Text
-                                    style={{
-                                        color: colors.WHITE_COLOR,
-                                        marginLeft: s(5),
-                                        fontFamily: fonts('poppinsSemibold'),
-                                        fontSize: s(10)
-                                    }}>
-                                    {'Use mobile camera'}
-                                </Text>
-                            </View>
-                            <View style={styles.short_button}>
-                                <Image
-                                    source={require('../../assets/images/camera.png')}
-                                    style={{ height: s(15), width: s(15), alignSelf: 'center', alignContent: 'center', tintColor: colors.WHITE_COLOR }}
-                                />
-                                <Text
-                                    style={{
-                                        color: colors.WHITE_COLOR,
-                                        marginLeft: s(5),
-                                        fontFamily: fonts('poppinsSemibold'),
-                                        fontSize: s(10)
-                                    }}>
-                                    {'Your photo gallery'}
-                                </Text>
-                            </View>
+                                    });
+                                }}>
+                                <View style={styles.short_button}>
+                                    <Image
+                                        source={require('../../assets/images/camera.png')}
+                                        style={{ height: s(15), width: s(15), alignSelf: 'center', alignContent: 'center', tintColor: colors.WHITE_COLOR }}
+                                    />
+                                    <Text
+                                        style={{
+                                            color: colors.WHITE_COLOR,
+                                            marginLeft: s(5),
+                                            fontFamily: fonts('poppinsSemibold'),
+                                            fontSize: s(10)
+                                        }}>
+                                        {'Use mobile camera'}
+                                    </Text>
+                                </View></TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.short_button}
+                                onPress={() => {
+                                    console.log('only check');
+                                    ImagePicker.openPicker({
+                                        width: 300,
+                                        height: 400,
+                                        cropping: true,
+                                        includeBase64: true
+                                    }).then(image => {
+                                        // console.log("image>>", image);
+                                        console.log("image>>", image?.path);
+                                        setDefultImage(image?.path)
+                                        setImage_data(image?.data)
+                                        // { render_image() }
+                                    });
+                                }}>
+                                <View style={styles.short_button}>
+                                    <Image
+                                        source={require('../../assets/images/camera.png')}
+                                        style={{ height: s(15), width: s(15), alignSelf: 'center', alignContent: 'center', tintColor: colors.WHITE_COLOR }}
+                                    />
+                                    <Text
+                                        style={{
+                                            color: colors.WHITE_COLOR,
+                                            marginLeft: s(5),
+                                            fontFamily: fonts('poppinsSemibold'),
+                                            fontSize: s(10)
+                                        }}>
+                                        {'Your photo gallery'}
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
                         </View>
 
 
@@ -283,7 +424,7 @@ var styles = StyleSheet.create({
         fontSize: s(15),
         color: colors.PRIMARY_COLOR,
         fontFamily: fonts('poppinsSemibold'),
-        fontStyle:'',
+        fontStyle: '',
         textAlign: 'center',
         alignSelf: 'center',
         justifyContent: 'center',
@@ -296,14 +437,14 @@ var styles = StyleSheet.create({
         textAlign: 'center',
         alignContent: 'center',
         height: s(40),
-        width:'90%',
+        width: '90%',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: colors.BUTTON,
         borderRadius: s(20),
         fontSize: s(12),
         margin: s(10),
-        marginTop:s(50),
+        marginTop: s(50),
         alignSelf: 'center',
         fontFamily: fonts('poppinsSemibold'),
 

@@ -19,6 +19,8 @@ target 'KYCApp' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  pod 'react-native-signature-capture', :path => '../node_modules/react-native-signature-capture'
+
   target 'KYCAppTests' do
     inherit! :complete
     # Pods for testing
