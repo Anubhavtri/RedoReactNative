@@ -333,6 +333,7 @@ var styles = StyleSheet.create({
     borderRadius: s(20),
     fontSize: s(12),
     marginTop: s(10),
+    marginBottom:s(10),
     alignSelf: 'center',
     fontFamily: fonts('poppinsSemibold'),
   },
