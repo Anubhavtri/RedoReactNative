@@ -1,15 +1,21 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Image, Platform, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Button, Image, Platform, ScrollView, StatusBar, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import { ms, mvs, s, vs } from 'react-native-size-matters';
 import colors from '../../templates/colors';
 import fonts from '../../utility/fonts';
 import VideoRecorder from 'react-native-beautiful-video-recorder';
 import { RNCamera } from 'react-native-camera';
-
+import Spinner from 'react-native-loading-spinner-overlay';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import loggedInClient from '../../utility/apiAuth/loggedInClient';
+import APIName from '../../utility/api/apiName';
+import RNFS from 'react-native-fs';
 const VideoKYC = props => {
     const [Image_data, setImage_data] = useState('');
+    const [ImageBase64_data, setImageBase64_data] = useState('');
 
+    const [getloader, setloader] = useState(false);
     useEffect(() => {
         console.log('This will run every dashjkjcjkxcjkxjckjxkcj>>>>>>!');
     }, []);
@@ -19,11 +25,68 @@ const VideoKYC = props => {
     const videoRecord = async () => {
         if (cameraRef && cameraRef.current) {
             cameraRef.current.open({ maxLength: 30 }, (data) => {
-                console.log('captured data', data); // data.uri is the file path
+               // console.log('captured data', data); // data.uri is the file path
                 setImage_data(data.uri);
+                
+              
+               try{
+                RNFS.readFile(data.uri, 'base64')
+                    .then(res => {
+                        setImageBase64_data(res);
+                    });
+                }catch (error){
+
+                }
             });
+        //     const base64image = await RNFS.readFile(Image_data, 'base64');
+        //    // const base64 = await FileSystem.readAsStringAsync(Image_data, { encoding: 'base64' });
+        //     console.log("res>>>>",base64image);
         }
     }
+    const UploadVideo = async () => {
+        const client = await loggedInClient();
+        const data = {
+            client_user: '1',
+            video: 'data:image/mp4;base64,'+ImageBase64_data,
+
+        };
+        console.log('cancel_Request', '' + JSON.stringify(data));
+        client.post(APIName.create_video_kyc, data)
+            .then(response => {
+                if (response.status == 200) {
+                    let data = response.data;
+                    try {
+                        ToastAndroid.show("KYC Updated successfully!", ToastAndroid.SHORT);
+
+                        props.navigation.goBack();
+                        // setresponse(response.data);
+
+                    } catch (error) {
+                        console.log('Exception' + error.test);
+                    }
+
+                    setloader(false);
+                } else if (response.status == 201) {
+                    let data = response.data;
+                    try {
+
+                        ToastAndroid.show("KYC Updated successfully!", ToastAndroid.SHORT);
+                        // setresponse(response.data);
+                        props.navigation.goBack();
+                    } catch (error) {
+                        console.log('Exception' + error.test);
+                    }
+
+                    setloader(false);
+                }
+                setloader(false);
+            })
+            .catch(error => {
+                console.log('error>>>>>' + error);
+                setloader(false);
+                ToastAndroid.show("getting error!", ToastAndroid.SHORT);
+            });
+    };
 
     return (
         <>
@@ -161,8 +224,12 @@ const VideoKYC = props => {
                 </ScrollView>
                 <TouchableOpacity
                     style={[styles.button, { backgroundColor: Image_data ? colors.BUTTON : colors.DARK_GRAY }]}
+                    disabled={(Image_data != '') ? false : true}
+
                     onPress={() => {
                         console.log('only check');
+                        setloader(true);
+                        UploadVideo();
                     }}>
 
 
@@ -176,6 +243,12 @@ const VideoKYC = props => {
 
 
                 </TouchableOpacity>
+                {getloader ?
+                    <Spinner
+                        visible={true}
+                        textContent={'Loading...'}
+                        textStyle={styles.spinnerTextStyle}
+                    /> : null}
             </View>
         </>
     );

@@ -6,11 +6,13 @@ import colors from '../../templates/colors';
 import fonts from '../../utility/fonts';
 import DashedLine from 'react-native-dashed-line';
 import ImagePicker from 'react-native-image-crop-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AadharCard = props => {
     const [DefultImage, setDefultImage] = useState('');
-    const [Image_data, setImage_data] = useState('');
     const [Front_Image_data, setFront_Image_data] = useState('');
+    const [Back_Image_data, setBack_Image_data] = useState('');
+
 
     useEffect(() => {
         console.log('This will run every dashjkjcjkxcjkxjckjxkcj>>>>>>!');
@@ -19,35 +21,43 @@ const AadharCard = props => {
 
     }, []);
 
-    const render_image = () => {
-
-        if (Image_data != '' && Image_data != null) {
-            { console.log('if is working') }
-
-            return <Image
-                style={{
-                    borderColor: colors.Gray_COLOR,
-                    borderWidth: 0.5,
-                    height: s(50),
-                    flex: 1,
-                    justifyContent: 'center',
-                    marginTop: s(20),
-                    marginLeft: s(50),
-                    marginRight: s(50),
-                    backgroundColor: 'red',
-                    marginBottom: s(20)
-                }}
-                source={{
-                    uri: `data:image/jpeg;base64,${Image_data}`,
-                }}></Image>
+    const getButtonColor = (b1, b2) => {
+        let color = null;
+        if (b1 != null && b1 != '' && b2 != null && b2 != '') {
+            color = colors.BUTTON;
+        } else {
+            color = colors.Gray_COLOR;
         }
-        else {
-            { console.log('if is not working') }
-            return;
+        return color;
+    };
+    const storeAadharCardData = async (value,front,back) => {
+        try {
+            await AsyncStorage.setItem('@setAadharcar', value);
+            await AsyncStorage.setItem('@setFrontAadharcard', front);
+            await AsyncStorage.setItem('@setBackAadharcar', back);
 
+        } catch (e) {
+            // saving error
         }
-
-    }
+    };
+    const storeVoterIDData = async (value,front,back) => {
+        try {
+            await AsyncStorage.setItem('@setVoterID', value);
+            await AsyncStorage.setItem('@setFrontVoterID', front);
+            await AsyncStorage.setItem('@setBackVoterID', back);
+        } catch (e) {
+            // saving error
+        }
+    };
+    const storeLicenseData = async (value,front,back) => {
+        try {
+            await AsyncStorage.setItem('@setLicense', value);
+            await AsyncStorage.setItem('@setFrontLicense', front);
+            await AsyncStorage.setItem('@setBackLicense', back);
+        } catch (e) {
+            // saving error
+        }
+    };
 
     return (
         <>
@@ -64,7 +74,7 @@ const AadharCard = props => {
                         }}>
                         <View style={{ flexDirection: 'row' }}>
 
-                            <Text style={styles.Title}>Aadhar Card</Text>
+                            <Text style={styles.Title}>{props?.route?.params?.name}</Text>
                             <Image
                                 source={require('../../assets/images/left.png')}
                                 style={{ tintColor: colors.PRIMARY_COLOR, height: s(24), width: s(24), position: 'absolute', top: 0, left: 0 }}
@@ -231,7 +241,7 @@ const AadharCard = props => {
                             marginRight: s(30)
 
                         }}>
-                            {Image_data != '' && Image_data != null ?
+                            {Back_Image_data != '' && Back_Image_data != null ?
                                 <View style={{
                                     borderColor: colors.Gray_COLOR,
                                     borderWidth: 0.5,
@@ -245,7 +255,7 @@ const AadharCard = props => {
                                 }}>
                                     <Image
                                         source={{
-                                            uri: `data:image/jpeg;base64,${Image_data}`
+                                            uri: `data:image/jpeg;base64,${Back_Image_data}`
                                         }}
                                         style={{ backgroundColor: colors.Gray_COLOR, flex: 1, resizeMode: 'cover' }}
                                     ></Image>
@@ -330,7 +340,7 @@ const AadharCard = props => {
                                         // console.log("image>>", image);
                                         console.log("image>>", image?.path);
                                         setDefultImage(image?.path)
-                                        setImage_data(image?.data)
+                                        setBack_Image_data(image?.data)
                                         // { render_image() }
                                     });
                                 }}>
@@ -356,9 +366,18 @@ const AadharCard = props => {
 
 
                         <TouchableOpacity
-                            style={styles.button}
+                            style={[styles.button, { backgroundColor: getButtonColor(Front_Image_data, Back_Image_data) }]}
+                            disabled={(Front_Image_data != '' && Back_Image_data != '') ? false : true}
                             onPress={() => {
                                 console.log('only check');
+                                if (props?.route?.params?.name == 'Aadhar Card') {
+                                    storeAadharCardData('true',Front_Image_data,Back_Image_data);
+                                }else if (props?.route?.params?.name == 'Driving License') {
+                                    storeLicenseData('true',Front_Image_data,Back_Image_data);
+                                }else if (props?.route?.params?.name == 'Voter ID Card') {
+                                    storeVoterIDData('true',Front_Image_data,Back_Image_data);
+                                }
+                                props.navigation.goBack();
                             }}>
 
 

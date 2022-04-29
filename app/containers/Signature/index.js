@@ -1,15 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect,useRef } from 'react';
-import { Image, Platform, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect,useRef,useState } from 'react';
+import { Image, Platform, ScrollView, StatusBar, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import { ms, mvs, s, vs } from 'react-native-size-matters';
 import colors from '../../templates/colors';
 import fonts from '../../utility/fonts';
 import DashedLine from 'react-native-dashed-line';
 import SignatureCapture from 'react-native-signature-capture';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
+import loggedInClient from '../../utility/apiAuth/loggedInClient';
+import APIName from '../../utility/api/apiName';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const Signature = props => {
     const sign=useRef();
+    const [Image_data, setImage_data] = useState('');
+    const [getloader, setloader] = useState(false);
     useEffect(() => {
         console.log('This will run every dashjkjcjkxcjkxjckjxkcj>>>>>>!');
 
@@ -18,10 +23,57 @@ const Signature = props => {
     }, []);
     const onSave = function (result) {
         console.log("ldkfldkfk>>>>>>>",result);
+        setImage_data('data:image/png;base64,'+result.encoded);
+        setloader(true);
+        UploadSignature('data:image/png;base64,'+result.encoded);
         // setData(`data:image/png;base64,${result.encoded}`);
         // signatureView.current.show(false);
       };
+      const UploadSignature = async (database64) => {
+        const client = await loggedInClient();
+        const data = {
+            client_user: '1',
+            sign_image: database64,
 
+        };
+        console.log('cancel_Request', '' + JSON.stringify(data));
+        client.post(APIName.create_signature, data)
+            .then(response => {
+                if (response.status == 200) {
+                    let data = response.data;
+                    try {
+                        ToastAndroid.show("Signature Updated successfully!", ToastAndroid.SHORT);
+
+                        props.navigation.goBack();
+                        // setresponse(response.data);
+
+                    } catch (error) {
+                        console.log('Exception' + error.test);
+                    }
+
+                    setloader(false);
+                } else if (response.status == 201) {
+                    let data = response.data;
+                    try {
+
+                        ToastAndroid.show("Signature Updated successfully!", ToastAndroid.SHORT);
+                        // setresponse(response.data);
+                        props.navigation.goBack();
+                    } catch (error) {
+                        console.log('Exception' + error.test);
+                    }
+
+                    setloader(false);
+                }
+                setloader(false);
+            })
+            .catch(error => {
+                console.log('error>>>>>' + error);
+                ToastAndroid.show("getting error!", ToastAndroid.SHORT);
+
+                setloader(false);
+            });
+       };
 
     return (
         <>
@@ -133,6 +185,12 @@ const Signature = props => {
 
 
                 </TouchableOpacity>
+                {getloader ?
+                    <Spinner
+                        visible={true}
+                        textContent={'Loading...'}
+                        textStyle={styles.spinnerTextStyle}
+                    /> : null}
             </View>
         </>
     );

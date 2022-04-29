@@ -123,7 +123,7 @@ const Dashboard = props => {
             </View>
 
             <View style={styles.card_container}>
-              <View style={{ flex: 1 }}>
+              <View style={{ flex: 1 ,justifyContent:'center',alignContent:'center'}}>
                 <View style={styles.circle_main}>
                   <Image
                     source={require('../../assets/images/accepted.png')}
@@ -243,7 +243,10 @@ const Dashboard = props => {
             </TouchableOpacity>
 
 
-            <TouchableOpacity
+           
+          </View>
+        </ScrollView>
+        <TouchableOpacity
               style={styles.button}
               onPress={() => {
                 console.log('only check');
@@ -263,8 +266,6 @@ const Dashboard = props => {
 
 
             </TouchableOpacity>
-          </View>
-        </ScrollView>
       </View>
     </>
   );
@@ -285,7 +286,7 @@ var styles = StyleSheet.create({
   card_container: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: s(20)
+    marginTop: s(25)
   },
   circle_main: {
     height: s(30), width: s(30), borderRadius: s(15), backgroundColor: colors.PRIMARY_COLOR, justifyContent: 'center', alignItems: 'center', alignSelf: 'center'
@@ -298,7 +299,8 @@ var styles = StyleSheet.create({
   cancel_mark: { tintColor: colors.RED, height: s(15), width: s(15), alignSelf: 'center', margin: s(2) },
 
   card_title: {
-    justifyContent: 'center', alignSelf: 'center', color: colors.PRIMARY_COLOR, flex: 4, fontFamily: fonts('poppinsSemibold')
+    justifyContent: 'center', alignSelf: 'center', color: colors.PRIMARY_COLOR, flex: 4, fontFamily: fonts('poppinsSemibold'),
+    fontSize:s(15)
   },
   text_input: {
     fontSize: s(20),
