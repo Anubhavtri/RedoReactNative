@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import loggedInClient from '../../utility/apiAuth/loggedInClient';
 import APIName from '../../utility/api/apiName';
 import Spinner from 'react-native-loading-spinner-overlay';
+import ImagePicker from 'react-native-image-crop-picker';
 
 
 const KYCDocuments = props => {
@@ -18,6 +19,7 @@ const KYCDocuments = props => {
     const [drivingLicense, setDrivingLicense] = useState(false);
     const [voterCard, setVoterCard] = useState(false);
     const [getloader, setloader] = useState(false);
+    const [profile_data, setprofile_data] = useState('');
 
     useFocusEffect(
         React.useCallback(() => {
@@ -67,7 +69,7 @@ const KYCDocuments = props => {
             if (retrievedItem !== null) {
                 return retrievedItem;
             }
-            return null;
+            return "";
         } catch (error) {
             console.log('getAccessToken', 'Error retrieving data');
         }
@@ -78,7 +80,7 @@ const KYCDocuments = props => {
             if (retrievedItem !== null) {
                 return retrievedItem;
             }
-            return null;
+            return "";
         } catch (error) {
             console.log('getAccessToken', 'Error retrieving data');
         }
@@ -89,7 +91,7 @@ const KYCDocuments = props => {
             if (retrievedItem !== null) {
                 return retrievedItem;
             }
-            return null;
+            return "";
         } catch (error) {
             console.log('getAccessToken', 'Error retrieving data');
         }
@@ -100,7 +102,7 @@ const KYCDocuments = props => {
             if (retrievedItem !== null) {
                 return retrievedItem;
             }
-            return null;
+            return "";
         } catch (error) {
             console.log('getAccessToken', 'Error retrieving data');
         }
@@ -111,7 +113,7 @@ const KYCDocuments = props => {
             if (retrievedItem !== null) {
                 return retrievedItem;
             }
-            return null;
+            return "";
         } catch (error) {
             console.log('getAccessToken', 'Error retrieving data');
         }
@@ -122,7 +124,7 @@ const KYCDocuments = props => {
             if (retrievedItem !== null) {
                 return retrievedItem;
             }
-            return null;
+            return "";
         } catch (error) {
             console.log('getAccessToken', 'Error retrieving data');
         }
@@ -158,7 +160,7 @@ const KYCDocuments = props => {
     };
     const getButtonColor = (b1, b2, b3) => {
         let color = null;
-        if (b1 && b2 && b3) {
+        if (b1 || b2 || b3) {
             color = colors.BUTTON;
         } else {
             color = colors.Gray_COLOR;
@@ -265,12 +267,20 @@ const KYCDocuments = props => {
 
                 </View>
                 <Text style={{ justifyContent: 'center', alignSelf: 'center', color: colors.PRIMARY_TEXT_COLOR }}>PPMC Report for (Harmind Arora)</Text>
-                <Image
-                    source={require('../../assets/images/user.png')}
-                    style={{ height: s(60), width: s(60), alignSelf: 'center', alignContent: 'center', marginTop: s(20) }}
-                />
+                {profile_data != '' && profile_data != null ?
+                    <Image
+                    source={{
+                        uri: `data:image/jpeg;base64,${profile_data}`
+                    }}
+                        style={{ height: s(60), width: s(60), alignSelf: 'center', alignContent: 'center', marginTop: s(20),borderRadius:s(30) }}
+                    /> :
+
+                    <Image
+                        source={require('../../assets/images/user.png')}
+                        style={{ height: s(60), width: s(60), alignSelf: 'center', alignContent: 'center', marginTop: s(20) }}
+                    />}
                 <Text style={{ justifyContent: 'center', alignSelf: 'center', fontSize: s(10) }}>Update your photo</Text>
-                <TouchableOpacity
+                {/* <TouchableOpacity
                     style={styles.short_button}
                     onPress={() => {
                         console.log('only check');
@@ -293,7 +303,72 @@ const KYCDocuments = props => {
                     </View>
 
 
-                </TouchableOpacity>
+                </TouchableOpacity> */}
+                <View style={{ flexDirection: 'row', }}>
+                    <TouchableOpacity
+                        style={styles.camera_button}
+                        onPress={() => {
+                            console.log('only check');
+                            ImagePicker.openCamera({
+                                width: 300,
+                                height: 400,
+                                cropping: true,
+                                includeBase64: true
+                            }).then(image => {
+                                console.log(image);
+
+                                setprofile_data(image?.data)
+                            });
+                        }}>
+                        <View style={styles.camera_button}>
+                            <Image
+                                source={require('../../assets/images/camera.png')}
+                                style={{ height: s(15), width: s(15), alignSelf: 'center', alignContent: 'center', tintColor: colors.WHITE_COLOR }}
+                            />
+                            <Text
+                                style={{
+                                    color: colors.WHITE_COLOR,
+                                    marginLeft: s(5),
+                                    fontFamily: fonts('poppinsSemibold'),
+                                    fontSize: s(10)
+                                }}>
+                                {'Use mobile camera'}
+                            </Text>
+                        </View></TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.camera_button}
+                        onPress={() => {
+                            console.log('only check');
+                            ImagePicker.openPicker({
+                                width: 300,
+                                height: 400,
+                                cropping: true,
+                                includeBase64: true
+                            }).then(image => {
+                                // console.log("image>>", image);
+                                console.log("image>>", image?.path);
+
+                                setprofile_data(image?.data)
+                                // { render_image() }
+                            });
+                        }}>
+                        <View style={styles.camera_button}>
+                            <Image
+                                source={require('../../assets/images/camera.png')}
+                                style={{ height: s(15), width: s(15), alignSelf: 'center', alignContent: 'center', tintColor: colors.WHITE_COLOR }}
+                            />
+                            <Text
+                                style={{
+                                    color: colors.WHITE_COLOR,
+                                    marginLeft: s(5),
+                                    fontFamily: fonts('poppinsSemibold'),
+                                    fontSize: s(10)
+                                }}>
+                                {'Your photo gallery'}
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
                 <DashedLine style={{ margin: s(10), marginTop: s(20) }}
                     dashLength={5} dashColor={colors.PRIMARY_COLOR} dashThickness={1} />
                 <ScrollView>
@@ -421,7 +496,7 @@ const KYCDocuments = props => {
                 </ScrollView>
                 <TouchableOpacity
                     style={[styles.button, { backgroundColor: getButtonColor(aadharcard, voterCard, drivingLicense) }]}
-                    disabled={(aadharcard != '' && voterCard != ''&& drivingLicense != '') ? false : true}
+                    disabled={(aadharcard != '' || voterCard != '' || drivingLicense != '') ? false : true}
                     onPress={() => {
                         console.log('only check');
                         setloader(true)
@@ -536,6 +611,21 @@ var styles = StyleSheet.create({
         borderRadius: s(20),
         fontSize: s(12),
         marginTop: s(10),
+        alignSelf: 'center',
+        fontFamily: fonts('poppinsSemibold'),
+    },
+    camera_button: {
+        textAlign: 'center',
+        alignContent: 'center',
+        height: s(30),
+        flex: 2,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: colors.PRIMARY_COLOR,
+        borderRadius: s(20),
+        fontSize: s(12),
+        margin: s(10),
         alignSelf: 'center',
         fontFamily: fonts('poppinsSemibold'),
     },

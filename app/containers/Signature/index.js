@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect,useRef,useState } from 'react';
-import { Image, Platform, ScrollView, StatusBar, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Image, Platform, Pressable, ScrollView, StatusBar, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import { ms, mvs, s, vs } from 'react-native-size-matters';
 import colors from '../../templates/colors';
 import fonts from '../../utility/fonts';
@@ -12,9 +12,11 @@ import APIName from '../../utility/api/apiName';
 import Spinner from 'react-native-loading-spinner-overlay';
 
 const Signature = props => {
-    const sign=useRef();
+    const sign = useRef();
     const [Image_data, setImage_data] = useState('');
     const [getloader, setloader] = useState(false);
+    const [touch, settouch] = useState(false);
+
     useEffect(() => {
         console.log('This will run every dashjkjcjkxcjkxjckjxkcj>>>>>>!');
 
@@ -22,14 +24,14 @@ const Signature = props => {
 
     }, []);
     const onSave = function (result) {
-        console.log("ldkfldkfk>>>>>>>",result);
-        setImage_data('data:image/png;base64,'+result.encoded);
+        console.log("ldkfldkfk>>>>>>>", result);
+        setImage_data('data:image/png;base64,' + result.encoded);
         setloader(true);
-        UploadSignature('data:image/png;base64,'+result.encoded);
+        UploadSignature('data:image/png;base64,' + result.encoded);
         // setData(`data:image/png;base64,${result.encoded}`);
         // signatureView.current.show(false);
-      };
-      const UploadSignature = async (database64) => {
+    };
+    const UploadSignature = async (database64) => {
         const client = await loggedInClient();
         const data = {
             client_user: '1',
@@ -73,7 +75,7 @@ const Signature = props => {
 
                 setloader(false);
             });
-       };
+    };
 
     return (
         <>
@@ -107,60 +109,64 @@ const Signature = props => {
                 <ScrollView>
                     <View style={styles.container}>
 
+                        <Pressable
+                            onPress={() => {
+                                console.log('only check');
+                                settouch(true);
+                            }}>
+                            <View style={{
+                                borderWidth: 1,
+                                borderStyle: 'dashed',
+                                borderColor: colors.Gray_COLOR,
+                                flex: 1,
+                                height: s(400),
+                                justifyContent: 'flex-end',
+                                marginTop: s(20),
+                                marginLeft: s(30),
+                                marginRight: s(30)
 
-                        <View style={{
-                            borderWidth: 1,
-                            borderStyle: 'dashed',
-                            borderColor: colors.Gray_COLOR,
-                            flex: 1,
-                            height: s(400),
-                            justifyContent: 'flex-end',
-                            marginTop: s(20),
-                            marginLeft: s(30),
-                            marginRight: s(30)
+                            }}>
 
-                        }}>
+                                <SignatureCapture
+                                    style={styles.signature}
+                                    ref={sign}
+                                    // onSaveEvent={this._onSaveEvent}
+                                    // onDragEvent={this._onDragEvent}
+                                    saveImageFileInExtStorage={false}
+                                    showNativeButtons={false}
+                                    showTitleLabel={false}
+                                    backgroundColor={colors.WHITE_COLOR}
+                                    strokeColor={colors.PRIMARY_TEXT_COLOR}
+                                    minStrokeWidth={4}
+                                    maxStrokeWidth={4}
+                                    viewMode={"portrait"}
+                                    onSaveEvent={onSave} />
 
-                            <SignatureCapture
-                                style={ styles.signature}
-                                 ref={sign}
-                                // onSaveEvent={this._onSaveEvent}
-                                // onDragEvent={this._onDragEvent}
-                                saveImageFileInExtStorage={false}
-                                showNativeButtons={false}
-                                showTitleLabel={false}
-                                backgroundColor={colors.WHITE_COLOR}
-                                strokeColor={colors.PRIMARY_TEXT_COLOR}
-                                minStrokeWidth={4}
-                                maxStrokeWidth={4}
-                                viewMode={"portrait"} 
-                                onSaveEvent={onSave}/>
-                          
-                            <TouchableOpacity
-                                style={styles.short_button}
-                                onPress={() => {
-                                    console.log('only check');
-                                    sign.current.resetImage();
-                                }}>
+                                <TouchableOpacity
+                                    style={styles.short_button}
+                                    onPress={() => {
+                                        console.log('only check');
+                                        sign.current.resetImage();
+                                    }}>
 
-                                <View style={{ flexDirection: 'row' }}>
+                                    <View style={{ flexDirection: 'row' }}>
 
-                                    <Text
-                                        style={{
-                                            color: colors.WHITE_COLOR,
-                                            marginLeft: s(5),
-                                            fontFamily: fonts('poppinsSemibold'),
-                                            fontSize: s(10)
-                                        }}>
-                                        {'Clear all'}
-                                    </Text>
-                                </View>
+                                        <Text
+                                            style={{
+                                                color: colors.WHITE_COLOR,
+                                                marginLeft: s(5),
+                                                fontFamily: fonts('poppinsSemibold'),
+                                                fontSize: s(10)
+                                            }}>
+                                            {'Clear all'}
+                                        </Text>
+                                    </View>
 
 
-                            </TouchableOpacity>
+                                </TouchableOpacity>
 
-                        </View>
-
+                            </View>
+                        </Pressable>
                     </View>
                 </ScrollView>
                 <View style={{}}>
@@ -168,7 +174,8 @@ const Signature = props => {
 
                 </View>
                 <TouchableOpacity
-                    style={styles.button}
+                    style={[styles.button,{backgroundColor:(touch != '' && touch != '') ?colors.BUTTON:colors.DARK_GRAY}]}
+                    disabled={(touch != '' && touch != '') ? false : true}
                     onPress={() => {
                         console.log('only check');
                         sign.current.saveImage()
@@ -204,7 +211,7 @@ var styles = StyleSheet.create({
         flex: 1,
         borderColor: '#000033',
         borderWidth: 1,
-        height:'100%'
+        height: '100%'
     },
     toolbar: {
         backgroundColor: 'transparent',
@@ -282,9 +289,9 @@ var styles = StyleSheet.create({
         margin: s(10),
         alignSelf: 'flex-end',
         fontFamily: fonts('poppinsSemibold'),
-        position:'absolute',
-        bottom:0,
-        right:0
+        position: 'absolute',
+        bottom: 0,
+        right: 0
     },
 });
 

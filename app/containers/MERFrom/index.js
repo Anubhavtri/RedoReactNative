@@ -122,7 +122,8 @@ const MERFrom = props => {
                     />
 
                 </View>
-                {Front_Image_data?<TouchableOpacity
+                {Front_Image_data?
+                <TouchableOpacity
                     style={styles.button}
                     onPress={() => {
                         console.log('only check');

@@ -308,8 +308,7 @@ const AadharCard = props => {
                                     }).then(image => {
                                         console.log(image);
                                         setDefultImage(image?.path)
-                                        setImage_data(image?.data)
-
+                                        setBack_Image_data(image?.data)
                                     });
                                 }}>
                                 <View style={styles.short_button}>

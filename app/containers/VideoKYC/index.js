@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Image, Platform, ScrollView, StatusBar, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import { Alert, Animated, Button, Dimensions, Image, Platform, ScrollView, StatusBar, StyleSheet, Text, ToastAndroid, TouchableOpacity, View } from 'react-native';
 import { ms, mvs, s, vs } from 'react-native-size-matters';
 import colors from '../../templates/colors';
 import fonts from '../../utility/fonts';
@@ -11,43 +11,68 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import loggedInClient from '../../utility/apiAuth/loggedInClient';
 import APIName from '../../utility/api/apiName';
 import RNFS from 'react-native-fs';
-const VideoKYC = props => {
-    const [Image_data, setImage_data] = useState('');
-    const [ImageBase64_data, setImageBase64_data] = useState('');
+import Video from 'react-native-video';
+import VideoPlayer from 'react-native-video-controls';
+import ProgressBarAnimated from 'react-native-progress-bar-animated';
+import { useFocusEffect } from '@react-navigation/native';
 
+const VideoKYC = props => {
+    const sign = useRef();
+    const [Image_data, setImage_data] = useState('');
+    const [player, setPlayer] = useState('');
+    const [preview, setPreview] = useState('');
+    const [ImageBase64_data, setImageBase64_data] = useState('');
     const [getloader, setloader] = useState(false);
-    useEffect(() => {
-        console.log('This will run every dashjkjcjkxcjkxjckjxkcj>>>>>>!');
-    }, []);
+
+    const countInterval = useRef(null);
+    const [count, setCount] = useState(10);
+    const loaderValue = useRef(new Animated.Value(0)).current;
+    const barWidth = Dimensions.get('screen').width - 30;
+
+
+
+    useFocusEffect(
+        React.useCallback(() => {
+            if (getloader) {
+                countInterval.current = setInterval(() => setCount((old) => old + 5), 1000);
+                return () => {
+                    clearInterval(countInterval); //when user exits, clear this interval.
+                };
+            }
+        }, [getloader])
+    );
+
+
+
 
     const cameraRef = useRef(null);
 
     const videoRecord = async () => {
         if (cameraRef && cameraRef.current) {
-            cameraRef.current.open({ maxLength: 30 }, (data) => {
-               // console.log('captured data', data); // data.uri is the file path
+            cameraRef.current.open({ maxLength: 30, language: 'en/' }, (data) => {
+                // console.log('captured data', data); // data.uri is the file path
                 setImage_data(data.uri);
-                
-              
-               try{
-                RNFS.readFile(data.uri, 'base64')
-                    .then(res => {
-                        setImageBase64_data(res);
-                    });
-                }catch (error){
+
+
+                try {
+                    RNFS.readFile(data.uri, 'base64')
+                        .then(res => {
+                            setImageBase64_data(res);
+                        });
+                } catch (error) {
 
                 }
             });
-        //     const base64image = await RNFS.readFile(Image_data, 'base64');
-        //    // const base64 = await FileSystem.readAsStringAsync(Image_data, { encoding: 'base64' });
-        //     console.log("res>>>>",base64image);
+            //     const base64image = await RNFS.readFile(Image_data, 'base64');
+            //    // const base64 = await FileSystem.readAsStringAsync(Image_data, { encoding: 'base64' });
+            //     console.log("res>>>>",base64image);
         }
     }
     const UploadVideo = async () => {
         const client = await loggedInClient();
         const data = {
             client_user: '1',
-            video: 'data:image/mp4;base64,'+ImageBase64_data,
+            video: 'data:image/mp4;base64,' + ImageBase64_data,
 
         };
         console.log('cancel_Request', '' + JSON.stringify(data));
@@ -87,149 +112,42 @@ const VideoKYC = props => {
                 ToastAndroid.show("getting error!", ToastAndroid.SHORT);
             });
     };
-
+    const progressCustomStyles = {
+        backgroundColor: colors.PRIMARY_COLOR,
+        borderWidth: 0,
+        borderRadius: s(10),
+        height: 20
+    };
     return (
         <>
-            <VideoRecorder ref={cameraRef} />
-            <StatusBar barStyle="light-content" />
-            <View style={styles.container}>
+            {getloader ? <View style={styles.progress_container}>
+                <Text >Loading....</Text>
+                <View style={[styles.progressBar, { backgroundColor: count >= 100 ? 'transparent' : colors.DARK_GRAY }]}>
+                    <ProgressBarAnimated
+                        {...progressCustomStyles}
+                        width={barWidth}
+                        value={count}
+                        maxValue={100}
+                        onComplete={() => {
+                            if (count >= 100) {
+                                setCount(100);
+                                clearInterval(countInterval);
+                            }
 
+                        }}
+                    />
 
-                <View style={styles.toolbar}>
-                    <TouchableOpacity
-                        onPress={() => {
-                            props.navigation.goBack();
-
-
-                        }}>
-                        <View style={{ flexDirection: 'row' }}>
-
-                            <Text style={styles.Title}>Video KYC</Text>
-                            <Image
-                                source={require('../../assets/images/left.png')}
-                                style={{ tintColor: colors.PRIMARY_COLOR, height: s(24), width: s(24), position: 'absolute', top: 0, left: 0 }}
-                            />
-                        </View>
-                    </TouchableOpacity>
 
                 </View>
 
-                <Text style={{ justifyContent: 'center', alignSelf: 'center', fontSize: s(10) }}>PPMC Report for (Harmind Arora)</Text>
+                <Text style={{ marginTop: s(20), fontFamily: fonts('poppinsSemibold'), fontSize: s(20) }}>{count >= 100 ? 'Done' : count + '%'}</Text>
 
-
-
-                <ScrollView>
-                    <View style={styles.container}>
-
-
-                        <View style={{
-                            borderWidth: 1,
-                            borderStyle: 'dashed',
-                            borderColor: colors.Gray_COLOR,
-                            height: s(140),
-                            flex: 1,
-                            backgroundColor: colors.Thine_Gray,
-                            justifyContent: 'center',
-                            marginTop: s(50),
-                            marginLeft: s(30),
-                            marginRight: s(30)
-
-                        }}>
-                            {Image_data != '' && Image_data != null ?
-                                <Image
-                                    source={{
-                                        uri: Image_data
-                                    }}
-                                    style={{ backgroundColor: colors.Gray_COLOR, flex: 1, resizeMode: 'cover' }}
-                                ></Image> :
-                                <Image
-                                    source={require('../../assets/images/video-camera.png')}
-                                    style={{ tintColor: colors.Gray_COLOR, height: s(54), width: s(54), alignContent: 'center', alignSelf: 'center' }}
-                                />}
-                        </View>
-
-
-
-
-
-
-                        {Image_data != '' && Image_data != null ?
-                            <View style={{ flexDirection: 'row', flex: 1, marginLeft: s(20), marginRight: s(20), justifyContent: 'center', marginTop: s(30) }}>
-                                <TouchableOpacity
-                                    style={styles.preview_button}
-                                    onPress={() => {
-                                        console.log('only check');
-
-                                    }}>
-                                    <View style={[styles.preview_button, { backgroundColor: colors.WHITE_COLOR, borderColor: colors.PRIMARY_COLOR, borderWidth: s(1) }]}>
-
-                                        <Text
-                                            style={{
-                                                color: colors.PRIMARY_COLOR,
-                                                marginLeft: s(5),
-                                                fontFamily: fonts('poppinsSemibold'),
-                                                fontSize: s(10)
-                                            }}>
-                                            {'Cancel'}
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={styles.preview_button}
-                                    onPress={() => {
-                                        console.log('only check');
-
-                                    }}>
-                                    <View style={styles.preview_button}>
-
-                                        <Text
-                                            style={{
-                                                color: colors.WHITE_COLOR,
-                                                marginLeft: s(5),
-                                                fontFamily: fonts('poppinsSemibold'),
-                                                fontSize: s(10)
-                                            }}>
-                                            {'Preview'}
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
-                            </View> :
-                            <View style={{ flexDirection: 'row', flex: 1, marginLeft: s(20), marginRight: s(20), justifyContent: 'center', marginTop: s(30) }}>
-                                <TouchableOpacity
-                                    onPress={() => {
-                                        videoRecord()
-                                    }}>
-
-                                    <View style={styles.short_button}>
-
-                                        <Text
-                                            style={{
-                                                color: colors.WHITE_COLOR,
-                                                marginLeft: s(5),
-                                                fontFamily: fonts('poppinsSemibold'),
-                                                fontSize: s(10)
-                                            }}>
-                                            {'Start Recoding'}
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
-                        }
-
-
-
-
-
-                    </View>
-                </ScrollView>
                 <TouchableOpacity
-                    style={[styles.button, { backgroundColor: Image_data ? colors.BUTTON : colors.DARK_GRAY }]}
-                    disabled={(Image_data != '') ? false : true}
-
+                    style={[styles.button, { backgroundColor: count >= 100 ? colors.BUTTON : colors.DARK_GRAY, position: 'absolute', bottom: 0 }]}
+                    disabled={count >= 100 ? false : true}
                     onPress={() => {
-                        console.log('only check');
-                        setloader(true);
-                        UploadVideo();
+                        props.navigation.goBack();
+
                     }}>
 
 
@@ -238,18 +156,196 @@ const VideoKYC = props => {
                             color: colors.WHITE_COLOR,
                             fontFamily: fonts('poppinsSemibold'),
                         }}>
-                        {'Submit'}
+                        {'Confirm'}
                     </Text>
 
 
                 </TouchableOpacity>
-                {getloader ?
-                    <Spinner
-                        visible={true}
-                        textContent={'Loading...'}
-                        textStyle={styles.spinnerTextStyle}
-                    /> : null}
-            </View>
+            </View> :
+                <View style={styles.container}>
+                    < VideoRecorder ref={cameraRef}
+                    />
+
+                    <StatusBar barStyle="light-content" />
+                    <View style={styles.container}>
+
+
+                        <View style={styles.toolbar}>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    props.navigation.goBack();
+
+
+                                }}>
+                                <View style={{ flexDirection: 'row' }}>
+
+                                    <Text style={styles.Title}>Video KYC</Text>
+                                    <Image
+                                        source={require('../../assets/images/left.png')}
+                                        style={{ tintColor: colors.PRIMARY_COLOR, height: s(24), width: s(24), position: 'absolute', top: 0, left: 0 }}
+                                    />
+                                </View>
+                            </TouchableOpacity>
+
+                        </View>
+
+                        <Text style={{ justifyContent: 'center', alignSelf: 'center', fontSize: s(10) }}>PPMC Report for (Harmind Arora)</Text>
+
+
+
+                        <ScrollView>
+                            <View style={styles.container}>
+
+
+                                <View style={{
+                                    borderWidth: 1,
+                                    borderStyle: 'dashed',
+                                    borderColor: colors.Gray_COLOR,
+                                    height: s(140),
+                                    flex: 1,
+                                    backgroundColor: colors.Thine_Gray,
+                                    justifyContent: 'center',
+                                    marginTop: s(50),
+                                    marginLeft: s(30),
+                                    marginRight: s(30)
+
+                                }}>
+                                    {Image_data != '' && Image_data != null ?
+                                        preview != '' && preview != null ?
+                                            // <Video source={{ uri: Image_data }}   // Can be a URL or a local file.
+                                            //     ref={(ref) => {
+                                            //         setPlayer(ref)
+                                            //     }}                                      // Store reference
+                                            //     // onBuffer={this.onBuffer}                // Callback when remote video is buffering
+                                            //     // onError={this.videoError}  
+                                            //     isExternalPlaybackActive= {true}             // Callback when video cannot be loaded
+                                            //     style={styles.backgroundVideo} /> 
+                                            <VideoPlayer
+                                                style={styles.backgroundVideo}
+                                                source={{ uri: Image_data }}
+                                            //navigator={this.props.navigator}
+                                            />
+                                            :
+                                            <Image
+                                                source={{
+                                                    uri: Image_data
+                                                }}
+                                                style={{ backgroundColor: colors.Gray_COLOR, flex: 1, resizeMode: 'cover' }}
+                                            ></Image> :
+                                        <Image
+                                            source={require('../../assets/images/video-camera.png')}
+                                            style={{ tintColor: colors.Gray_COLOR, height: s(54), width: s(54), alignContent: 'center', alignSelf: 'center' }}
+                                        />}
+                                </View>
+
+
+
+
+
+
+                                {Image_data != '' && Image_data != null ?
+                                    <View style={{ flexDirection: 'row', flex: 1, marginLeft: s(20), marginRight: s(20), justifyContent: 'center', marginTop: s(30) }}>
+                                        <TouchableOpacity
+                                            style={styles.preview_button}
+                                            onPress={() => {
+                                                console.log('only check');
+
+                                                setImage_data('');
+                                                setPreview('');
+                                                setImageBase64_data('');
+                                            }}>
+                                            <View style={[styles.preview_button, { backgroundColor: colors.WHITE_COLOR, borderColor: colors.PRIMARY_COLOR, borderWidth: s(1) }]}>
+
+                                                <Text
+                                                    style={{
+                                                        color: colors.PRIMARY_COLOR,
+                                                        marginLeft: s(5),
+                                                        fontFamily: fonts('poppinsSemibold'),
+                                                        fontSize: s(10)
+                                                    }}>
+                                                    {'Cancel'}
+                                                </Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity
+                                            style={styles.preview_button}
+                                            onPress={() => {
+                                                console.log('only check');
+                                                setPreview('true')
+                                            }}>
+                                            <View style={styles.preview_button}>
+
+                                                <Text
+                                                    style={{
+                                                        color: colors.WHITE_COLOR,
+                                                        marginLeft: s(5),
+                                                        fontFamily: fonts('poppinsSemibold'),
+                                                        fontSize: s(10)
+                                                    }}>
+                                                    {'Preview'}
+                                                </Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                    </View> :
+                                    <View style={{ flexDirection: 'row', flex: 1, marginLeft: s(20), marginRight: s(20), justifyContent: 'center', marginTop: s(30) }}>
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                                videoRecord()
+                                            }}>
+
+                                            <View style={styles.short_button}>
+
+                                                <Text
+                                                    style={{
+                                                        color: colors.WHITE_COLOR,
+                                                        marginLeft: s(5),
+                                                        fontFamily: fonts('poppinsSemibold'),
+                                                        fontSize: s(10)
+                                                    }}>
+                                                    {'Start Recoding'}
+                                                </Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                    </View>
+                                }
+
+
+
+
+
+                            </View>
+                        </ScrollView>
+                        <TouchableOpacity
+                            style={[styles.button, { backgroundColor: Image_data ? colors.BUTTON : colors.DARK_GRAY }]}
+                            disabled={(Image_data != '') ? false : true}
+
+                            onPress={() => {
+                                console.log('only check');
+                                setloader(true);
+                                UploadVideo();
+                            }}>
+
+
+                            <Text
+                                style={{
+                                    color: colors.WHITE_COLOR,
+                                    fontFamily: fonts('poppinsSemibold'),
+                                }}>
+                                {'Submit'}
+                            </Text>
+
+
+                        </TouchableOpacity>
+                        {/* {getloader ?
+                            <Spinner
+                                visible={true}
+                                textContent={'Loading...'}
+                                textStyle={styles.spinnerTextStyle}
+                            /> : null} */}
+                    </View>
+                </View>
+
+            }
         </>
     );
 };
@@ -258,6 +354,14 @@ var styles = StyleSheet.create({
         flex: 1,
         backgroundColor: colors.WHITE_COLOR
     },
+    progress_container: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingTop: s(2),
+        padding: 8,
+    },
     toolbar: {
         backgroundColor: 'transparent',
         height: s(50),
@@ -265,6 +369,20 @@ var styles = StyleSheet.create({
         alignContent: 'center',
         flexDirection: 'row',
         alignItems: 'center',
+    },
+    bar: {
+        borderRadius: 15,
+        height: '100%',
+    },
+    progressBar: {
+        height: 20,
+        flexDirection: 'row',
+        width: '100%',
+        backgroundColor: colors.DARK_GRAY,
+        borderWidth: 0,
+        borderRadius: s(10),
+        marginTop: s(20)
+
     },
     card_container: {
         flexDirection: 'row',
@@ -363,6 +481,9 @@ var styles = StyleSheet.create({
         paddingHorizontal: 20,
         alignSelf: 'center',
         margin: 20,
+    },
+    backgroundVideo: {
+        backgroundColor: colors.Gray_COLOR, flex: 1, resizeMode: 'cover'
     },
 });
 
