@@ -15,10 +15,13 @@ import Video from 'react-native-video';
 import VideoPlayer from 'react-native-video-controls';
 import ProgressBarAnimated from 'react-native-progress-bar-animated';
 import { useFocusEffect } from '@react-navigation/native';
+import axios from 'axios';
 
 const VideoKYC = props => {
     const sign = useRef();
     const [Image_data, setImage_data] = useState('');
+    const [data, setdata] = useState('');
+
     const [player, setPlayer] = useState('');
     const [preview, setPreview] = useState('');
     const [ImageBase64_data, setImageBase64_data] = useState('');
@@ -43,7 +46,29 @@ const VideoKYC = props => {
     );
 
 
+    const storeKYCVideo = async (value) => {
+        try {
+            await AsyncStorage.setItem('@setKYCVideo', value);
+        } catch (e) {
+            // saving error
+        }
+    };
+    const getBlob = async (fileUri) => {
+        const resp = await fetch(fileUri);
+        const imageBody = await resp.blob();
+        return imageBody;
+    };
+    const uploadUsingPresignedUrl = async (preSignedUrl, dataObj) => {
+        //const file = dataObj?.assets[0]
+        const imageBody = await getBlob(dataObj.uri);
+        console.log("Image URI", JSON.stringify(imageBody));
 
+        const response = await fetch(preSignedUrl, {
+            method: "PUT",
+            body: imageBody,
+        })
+        console.log("jkdsjkjskdjsjd", JSON.stringify(response));
+    }
 
     const cameraRef = useRef(null);
 
@@ -51,6 +76,7 @@ const VideoKYC = props => {
         if (cameraRef && cameraRef.current) {
             cameraRef.current.open({ maxLength: 30, language: 'en/' }, (data) => {
                 // console.log('captured data', data); // data.uri is the file path
+                setdata(data);
                 setImage_data(data.uri);
 
 
@@ -82,7 +108,7 @@ const VideoKYC = props => {
                     let data = response.data;
                     try {
                         ToastAndroid.show("KYC Updated successfully!", ToastAndroid.SHORT);
-
+                        storeKYCVideo('true');
                         props.navigation.goBack();
                         // setresponse(response.data);
 
@@ -96,7 +122,7 @@ const VideoKYC = props => {
                     try {
 
                         ToastAndroid.show("KYC Updated successfully!", ToastAndroid.SHORT);
-                        // setresponse(response.data);
+                        storeKYCVideo('true');
                         props.navigation.goBack();
                     } catch (error) {
                         console.log('Exception' + error.test);
@@ -321,8 +347,9 @@ const VideoKYC = props => {
 
                             onPress={() => {
                                 console.log('only check');
-                                setloader(true);
-                                UploadVideo();
+                                // setloader(true);
+                                //UploadVideo();
+                                uploadUsingPresignedUrl('https://apidev.redcliffelabs.com/api/v1/ppmc/get-presigned-s3/', data);
                             }}>
 
 

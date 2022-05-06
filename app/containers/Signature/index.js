@@ -10,6 +10,7 @@ import { Colors } from 'react-native/Libraries/NewAppScreen';
 import loggedInClient from '../../utility/apiAuth/loggedInClient';
 import APIName from '../../utility/api/apiName';
 import Spinner from 'react-native-loading-spinner-overlay';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Signature = props => {
     const sign = useRef();
@@ -45,7 +46,7 @@ const Signature = props => {
                     let data = response.data;
                     try {
                         ToastAndroid.show("Signature Updated successfully!", ToastAndroid.SHORT);
-
+                        storeSignature('true');
                         props.navigation.goBack();
                         // setresponse(response.data);
 
@@ -60,6 +61,7 @@ const Signature = props => {
 
                         ToastAndroid.show("Signature Updated successfully!", ToastAndroid.SHORT);
                         // setresponse(response.data);
+                        storeSignature('true');
                         props.navigation.goBack();
                     } catch (error) {
                         console.log('Exception' + error.test);
@@ -76,7 +78,13 @@ const Signature = props => {
                 setloader(false);
             });
     };
-
+    const storeSignature = async (value) => {
+        try {
+            await AsyncStorage.setItem('@setSignature', value);
+        } catch (e) {
+            // saving error
+        }
+    };
     return (
         <>
             <StatusBar barStyle="light-content" />

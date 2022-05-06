@@ -4,7 +4,7 @@ export default {
   register: 'register',
   create_signature:'create-signature/',
   create_mer_form:'create-mer-form/',
-
+  create_health_monitor:'create-health-monitor/',
 
 
   getEmployerContributionData: (

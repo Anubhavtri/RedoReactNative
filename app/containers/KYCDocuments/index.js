@@ -31,7 +31,13 @@ const KYCDocuments = props => {
             }
         }, [])
     );
-
+    const storeKYCDocument = async (value) => {
+        try {
+            await AsyncStorage.setItem('@setKYCDocument', value);
+        } catch (e) {
+            // saving error
+        }
+    };
 
     const getSavedData = async () => {
         console.log('getSavedData is working ');
@@ -184,6 +190,7 @@ const KYCDocuments = props => {
             console.log('async clear error', e);
         }
     };
+    
 
     const Update_profile = async () => {
         const client = await loggedInClient();
@@ -208,7 +215,7 @@ const KYCDocuments = props => {
                     let data = response.data;
                     try {
                         ToastAndroid.show("KYC Updated successfully!", ToastAndroid.SHORT);
-
+                        storeKYCDocument('true');
                         clearAsyncStorage();
                         props.navigation.goBack();
                         // setresponse(response.data);
@@ -223,7 +230,7 @@ const KYCDocuments = props => {
                     try {
 
                         ToastAndroid.show("KYC Updated successfully!", ToastAndroid.SHORT);
-                        // setresponse(response.data);
+                        storeKYCDocument('true');
                         clearAsyncStorage();
                         props.navigation.goBack();
                     } catch (error) {

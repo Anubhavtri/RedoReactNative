@@ -9,6 +9,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import loggedInClient from '../../utility/apiAuth/loggedInClient';
 import APIName from '../../utility/api/apiName';
 import Spinner from 'react-native-loading-spinner-overlay';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const MERFrom = props => {
     const [Front_Image_data, setFront_Image_data] = useState('');
@@ -27,6 +28,13 @@ const MERFrom = props => {
         return /[.]/.exec(fileUrl) ?
           /[^.]+$/.exec(fileUrl) : undefined;
       };
+      const storeMER = async (value) => {
+        try {
+            await AsyncStorage.setItem('@setMERForm', value);
+        } catch (e) {
+            // saving error
+        }
+    };
     const UploadMER = async () => {
         const client = await loggedInClient();
         const data = {
@@ -41,7 +49,7 @@ const MERFrom = props => {
                     let data = response.data;
                     try {
                         ToastAndroid.show("MER Form Updated successfully!", ToastAndroid.SHORT);
-
+                        storeMER('true');
                         props.navigation.goBack();
                         // setresponse(response.data);
 
@@ -55,7 +63,7 @@ const MERFrom = props => {
                     try {
 
                         ToastAndroid.show("MER Form Updated successfully!", ToastAndroid.SHORT);
-                        // setresponse(response.data);
+                        storeMER('true');
                         props.navigation.goBack();
                     } catch (error) {
                         console.log('Exception' + error.test);

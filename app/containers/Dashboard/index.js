@@ -1,17 +1,78 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { Image, Platform, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { ms, mvs, s, vs } from 'react-native-size-matters';
 import colors from '../../templates/colors';
 import fonts from '../../utility/fonts';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const Dashboard = props => {
-  useEffect(() => {
-    console.log('This will run every dashjkjcjkxcjkxjckjxkcj>>>>>>!');
+  const [kycDocuments, setkycDocuments] = useState(false);
+  const [kycVideo, setkycVideo] = useState(false);
+  const [healthMonitor, sethealthMonitor] = useState(false);
+  const [weightMachine, setweightMachine] = useState(false);
+  const [heightMachine, setheightMachine] = useState(false);
+  const [labTest, setlabTest] = useState(false);
+  const [merForm, setmerForm] = useState(false);
+  const [signature, setsignature] = useState(false);
 
 
 
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log("useFocusEffect is working>>")
+      try {
+        getSavedData();
+      } catch (e) {
+        console.error(e);
+      }
+    }, [])
+  );
 
+  const getSavedData = async () => {
+    console.log('getSavedData is working ');
+    try {
+      const retrievedHealthMonitoreItem = await AsyncStorage.getItem('@setHealthMonitore');
+      const retrievedKYCDocumentItem = await AsyncStorage.getItem('@setKYCDocument');
+      const retrievedMERFormItem = await AsyncStorage.getItem('@setMERForm');
+      const retrievedSignatureItem = await AsyncStorage.getItem('@setSignature');
+      const retrievedKYCVideoItem = await AsyncStorage.getItem('@setKYCVideo');
+
+      if (retrievedHealthMonitoreItem !== null && retrievedHealthMonitoreItem !== "") {
+        sethealthMonitor(true);
+      } else {
+        sethealthMonitor(false)
+      }
+
+      if (retrievedKYCDocumentItem !== null) {
+        setkycDocuments(true)
+      } else {
+        setkycDocuments(false)
+      }
+
+      if (retrievedMERFormItem !== null) {
+        setmerForm(true)
+      }
+      else {
+        setmerForm(false)
+      }
+      if (retrievedSignatureItem !== null) {
+        setsignature(true)
+      }
+      else {
+        setsignature(false)
+      }
+      if (retrievedKYCVideoItem !== null) {
+        setkycVideo(true)
+      }
+      else {
+        setkycVideo(false)
+      }
+
+    } catch (error) {
+      console.log('getSavedData', JSON.stringify(error));
+    }
+  };
 
 
   return (
@@ -48,7 +109,7 @@ const Dashboard = props => {
               onPress={() => {
                 console.log('only check');
                 props.navigation.navigate('KYCDocuments');
-                              }}>
+              }}>
               <View style={styles.card_container}>
                 <View style={{ flex: 1 }}>
                   <View style={styles.circle_main}>
@@ -60,14 +121,15 @@ const Dashboard = props => {
                 </View>
                 <Text style={styles.card_title}>KYC Documents</Text>
                 <View style={styles.check_mark_container}>
-                  <Image
-                    source={require('../../assets/images/check-mark.png')}
-                    style={styles.check_mark}
-                  />
-                  <Image
-                    source={require('../../assets/images/cancel.png')}
-                    style={styles.cancel_mark}
-                  />
+                  {kycDocuments ?
+                    <Image
+                      source={require('../../assets/images/check-mark.png')}
+                      style={styles.check_mark}
+                    /> :
+                    <Image
+                      source={require('../../assets/images/cancel.png')}
+                      style={styles.cancel_mark}
+                    />}
                 </View>
               </View>
             </TouchableOpacity>
@@ -76,54 +138,61 @@ const Dashboard = props => {
               onPress={() => {
                 console.log('only check VideoKYC');
                 props.navigation.navigate('VideoKYC');
-                              }}>
-            <View style={styles.card_container}>
-              <View style={{ flex: 1 }}>
-                <View style={styles.circle_main}>
+              }}>
+              <View style={styles.card_container}>
+                <View style={{ flex: 1 }}>
+                  <View style={styles.circle_main}>
+                    <Image
+                      source={require('../../assets/images/accepted.png')}
+                      style={{ tintColor: colors.WHITE_COLOR, height: s(15), width: s(15), alignSelf: 'center' }}
+                    />
+                  </View>
+                </View>
+                <Text style={styles.card_title}>KYC Video</Text>
+                <View style={styles.check_mark_container}>
+                  {kycVideo?
                   <Image
-                    source={require('../../assets/images/accepted.png')}
-                    style={{ tintColor: colors.WHITE_COLOR, height: s(15), width: s(15), alignSelf: 'center' }}
-                  />
+                    source={require('../../assets/images/check-mark.png')}
+                    style={styles.check_mark}
+                  />:
+                  <Image
+                    source={require('../../assets/images/cancel.png')}
+                    style={styles.cancel_mark}
+                  />}
                 </View>
               </View>
-              <Text style={styles.card_title}>KYC Video</Text>
-              <View style={styles.check_mark_container}>
-                <Image
-                  source={require('../../assets/images/check-mark.png')}
-                  style={styles.check_mark}
-                />
-                <Image
-                  source={require('../../assets/images/cancel.png')}
-                  style={styles.cancel_mark}
-                />
-              </View>
-            </View>
             </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                props.navigation.navigate('HealthMonitor', { name: 'Health Monitor' });
+              }}>
+              <View style={styles.card_container}>
+                <View style={{ flex: 1 }}>
+                  <View style={styles.circle_main}>
+                    <Image
+                      source={require('../../assets/images/accepted.png')}
+                      style={{ tintColor: colors.WHITE_COLOR, height: s(15), width: s(15), alignSelf: 'center' }}
+                    />
+                  </View>
+                </View>
+                <Text style={styles.card_title}>Health Monitor</Text>
 
-            <View style={styles.card_container}>
-              <View style={{ flex: 1 }}>
-                <View style={styles.circle_main}>
-                  <Image
-                    source={require('../../assets/images/accepted.png')}
-                    style={{ tintColor: colors.WHITE_COLOR, height: s(15), width: s(15), alignSelf: 'center' }}
-                  />
+                <View style={styles.check_mark_container}>
+                  {console.log("dgdfg", healthMonitor)}
+                  {healthMonitor ?
+                    <Image
+                      source={require('../../assets/images/check-mark.png')}
+                      style={styles.check_mark}
+                    /> :
+                    <Image
+                      source={require('../../assets/images/cancel.png')}
+                      style={styles.cancel_mark}
+                    />}
                 </View>
               </View>
-              <Text style={styles.card_title}>Health Monitor</Text>
-              <View style={styles.check_mark_container}>
-                <Image
-                  source={require('../../assets/images/check-mark.png')}
-                  style={styles.check_mark}
-                />
-                <Image
-                  source={require('../../assets/images/cancel.png')}
-                  style={styles.cancel_mark}
-                />
-              </View>
-            </View>
-
+            </TouchableOpacity>
             <View style={styles.card_container}>
-              <View style={{ flex: 1 ,justifyContent:'center',alignContent:'center'}}>
+              <View style={{ flex: 1, justifyContent: 'center', alignContent: 'center' }}>
                 <View style={styles.circle_main}>
                   <Image
                     source={require('../../assets/images/accepted.png')}
@@ -133,14 +202,15 @@ const Dashboard = props => {
               </View>
               <Text style={styles.card_title}>Weight Machine</Text>
               <View style={styles.check_mark_container}>
+                {weightMachine?
                 <Image
                   source={require('../../assets/images/check-mark.png')}
                   style={styles.check_mark}
-                />
+                />:
                 <Image
                   source={require('../../assets/images/cancel.png')}
                   style={styles.cancel_mark}
-                />
+                />}
               </View>
             </View>
 
@@ -155,14 +225,15 @@ const Dashboard = props => {
               </View>
               <Text style={styles.card_title}>Height Karma</Text>
               <View style={styles.check_mark_container}>
+                {heightMachine?
                 <Image
                   source={require('../../assets/images/check-mark.png')}
                   style={styles.check_mark}
-                />
+                />:
                 <Image
                   source={require('../../assets/images/cancel.png')}
                   style={styles.cancel_mark}
-                />
+                />}
               </View>
             </View>
 
@@ -177,95 +248,98 @@ const Dashboard = props => {
               </View>
               <Text style={styles.card_title}>Lab Test</Text>
               <View style={styles.check_mark_container}>
+                {labTest?
                 <Image
                   source={require('../../assets/images/check-mark.png')}
                   style={styles.check_mark}
-                />
+                />:
                 <Image
                   source={require('../../assets/images/cancel.png')}
                   style={styles.cancel_mark}
-                />
+                />}
               </View>
             </View>
             <TouchableOpacity
               onPress={() => {
                 console.log('only check VideoKYC');
                 props.navigation.navigate('MERFrom');
-                              }}>
-            <View style={styles.card_container}>
-              <View style={{ flex: 1 }}>
-                <View style={styles.circle_main}>
-                  <Image
-                    source={require('../../assets/images/accepted.png')}
-                    style={{ tintColor: colors.WHITE_COLOR, height: s(15), width: s(15), alignSelf: 'center' }}
-                  />
+              }}>
+              <View style={styles.card_container}>
+                <View style={{ flex: 1 }}>
+                  <View style={styles.circle_main}>
+                    <Image
+                      source={require('../../assets/images/accepted.png')}
+                      style={{ tintColor: colors.WHITE_COLOR, height: s(15), width: s(15), alignSelf: 'center' }}
+                    />
+                  </View>
+                </View>
+                <Text style={styles.card_title}>MER Form</Text>
+                <View style={styles.check_mark_container}>
+                  {merForm ?
+                    <Image
+                      source={require('../../assets/images/check-mark.png')}
+                      style={styles.check_mark}
+                    /> :
+                    <Image
+                      source={require('../../assets/images/cancel.png')}
+                      style={styles.cancel_mark}
+                    />}
                 </View>
               </View>
-              <Text style={styles.card_title}>MER Form</Text>
-              <View style={styles.check_mark_container}>
-                <Image
-                  source={require('../../assets/images/check-mark.png')}
-                  style={styles.check_mark}
-                />
-                <Image
-                  source={require('../../assets/images/cancel.png')}
-                  style={styles.cancel_mark}
-                />
-              </View>
-            </View>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
                 console.log('only check VideoKYC');
                 props.navigation.navigate('Signature');
-                              }}>
-            <View style={styles.card_container}>
-              <View style={{ flex: 1 }}>
-                <View style={styles.circle_main}>
-                  <Image
-                    source={require('../../assets/images/accepted.png')}
-                    style={{ tintColor: colors.WHITE_COLOR, height: s(15), width: s(15), alignSelf: 'center' }}
-                  />
+              }}>
+              <View style={styles.card_container}>
+                <View style={{ flex: 1 }}>
+                  <View style={styles.circle_main}>
+                    <Image
+                      source={require('../../assets/images/accepted.png')}
+                      style={{ tintColor: colors.WHITE_COLOR, height: s(15), width: s(15), alignSelf: 'center' }}
+                    />
+                  </View>
+                </View>
+                <Text style={styles.card_title}>Signature</Text>
+                <View style={styles.check_mark_container}>
+                  {signature ?
+                    <Image
+                      source={require('../../assets/images/check-mark.png')}
+                      style={styles.check_mark}
+                    /> :
+                    <Image
+                      source={require('../../assets/images/cancel.png')}
+                      style={styles.cancel_mark}
+                    />}
                 </View>
               </View>
-              <Text style={styles.card_title}>Signature</Text>
-              <View style={styles.check_mark_container}>
-                <Image
-                  source={require('../../assets/images/check-mark.png')}
-                  style={styles.check_mark}
-                />
-                <Image
-                  source={require('../../assets/images/cancel.png')}
-                  style={styles.cancel_mark}
-                />
-              </View>
-            </View>
             </TouchableOpacity>
 
 
-           
+
           </View>
         </ScrollView>
         <TouchableOpacity
-              style={styles.button}
-              onPress={() => {
-                console.log('only check');
+          style={styles.button}
+          onPress={() => {
+            console.log('only check');
 
 
 
-              }}>
+          }}>
 
 
-              <Text
-                style={{
-                  color: colors.WHITE_COLOR,
-                  fontFamily: fonts('poppinsSemibold'),
-                }}>
-                {'Submit'}
-              </Text>
+          <Text
+            style={{
+              color: colors.WHITE_COLOR,
+              fontFamily: fonts('poppinsSemibold'),
+            }}>
+            {'Submit'}
+          </Text>
 
 
-            </TouchableOpacity>
+        </TouchableOpacity>
       </View>
     </>
   );
@@ -300,7 +374,7 @@ var styles = StyleSheet.create({
 
   card_title: {
     justifyContent: 'center', alignSelf: 'center', color: colors.PRIMARY_COLOR, flex: 4, fontFamily: fonts('poppinsSemibold'),
-    fontSize:s(15)
+    fontSize: s(15)
   },
   text_input: {
     fontSize: s(20),
@@ -333,7 +407,7 @@ var styles = StyleSheet.create({
     borderRadius: s(20),
     fontSize: s(12),
     marginTop: s(10),
-    marginBottom:s(10),
+    marginBottom: s(10),
     alignSelf: 'center',
     fontFamily: fonts('poppinsSemibold'),
   },

@@ -7,6 +7,8 @@ import AadharCard from '../containers/AadharCard';
 import VideoKYC from '../containers/VideoKYC';
 import Signature from '../containers/Signature';
 import MERFrom from '../containers/MERFrom';
+import HealthMonitor from '../containers/HealthMonitor';
+
 
 
 
@@ -47,6 +49,11 @@ const MainStack = () => {
       <Stack.Screen
         name="MERFrom"
         component={MERFrom}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="HealthMonitor"
+        component={HealthMonitor}
         options={{ headerShown: false }}
       />
 

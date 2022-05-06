@@ -5,6 +5,8 @@ import AadharCard from './AadharCard';
 import VideoKYC from './VideoKYC';
 import Signature from './Signature';
 import MERFrom from './MERFrom';
+import HealthMonitor from './HealthMonitor';
+
 
 
 
@@ -19,5 +21,6 @@ export {
     VideoKYC,
     Signature,
     MERFrom,
+    HealthMonitor
   };
   
