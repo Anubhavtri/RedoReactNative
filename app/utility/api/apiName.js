@@ -5,6 +5,7 @@ export default {
   create_signature:'create-signature/',
   create_mer_form:'create-mer-form/',
   create_health_monitor:'create-health-monitor/',
+  get_presigned_s3:'get-presigned-s3/',
 
 
   getEmployerContributionData: (

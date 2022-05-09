@@ -26,6 +26,8 @@ const VideoKYC = props => {
     const [preview, setPreview] = useState('');
     const [ImageBase64_data, setImageBase64_data] = useState('');
     const [getloader, setloader] = useState(false);
+    const [getprogress, setgetprogress] = useState(false);
+
 
     const countInterval = useRef(null);
     const [count, setCount] = useState(10);
@@ -36,13 +38,13 @@ const VideoKYC = props => {
 
     useFocusEffect(
         React.useCallback(() => {
-            if (getloader) {
+            if (getprogress) {
                 countInterval.current = setInterval(() => setCount((old) => old + 5), 1000);
                 return () => {
                     clearInterval(countInterval); //when user exits, clear this interval.
                 };
             }
-        }, [getloader])
+        }, [getprogress])
     );
 
 
@@ -94,37 +96,112 @@ const VideoKYC = props => {
             //     console.log("res>>>>",base64image);
         }
     }
-    const UploadVideo = async () => {
+    const storeVideo = async (value) => {
+        try {
+            await AsyncStorage.setItem('@setKYCVideo', value);
+        } catch (e) {
+            // saving error
+        }
+    };
+    const UploadVideo = async (requestdata) => {
         const client = await loggedInClient();
-        const data = {
-            client_user: '1',
-            video: 'data:image/mp4;base64,' + ImageBase64_data,
+        const image_data = {
+            uri: data.uri,
+            type: 'mp4',
+            name: 'testing',
+          }
+          console.log('cancel_Request', '' + JSON.stringify(image_data));
+        const request_data = {
+            key: requestdata.key,
+             ...requestdata.fields,
+             file:  data.uri,
+
 
         };
-        console.log('cancel_Request', '' + JSON.stringify(data));
-        client.post(APIName.create_video_kyc, data)
+           const response =await axios({
+            url: requestdata.url,
+            method: 'POST',
+            data: request_data,
+            headers: {
+              Accept: 'application/json',
+              'content-type': 'multipart/form-data',
+            },
+          });
+          console.log("response>>>>>>>>>>"+JSON.stringify(response.status));
+          if (response.status == 204) {
+            setgetprogress(true);
+            UploadVideoURL(requestdata);
+          }
+          
+    };
+   
+   
+    const GetVideoURL = async () => {
+        const client = await loggedInClient();
+        client.get(APIName.get_presigned_s3, data)
             .then(response => {
                 if (response.status == 200) {
                     let data = response.data;
+                    console.log('Exception' +JSON.stringify(data));
                     try {
-                        ToastAndroid.show("KYC Updated successfully!", ToastAndroid.SHORT);
-                        storeKYCVideo('true');
-                        props.navigation.goBack();
+                        UploadVideo(data);
                         // setresponse(response.data);
 
                     } catch (error) {
                         console.log('Exception' + error.test);
                     }
 
-                    setloader(false);
+                   
                 } else if (response.status == 201) {
                     let data = response.data;
                     try {
 
-                        ToastAndroid.show("KYC Updated successfully!", ToastAndroid.SHORT);
-                        storeKYCVideo('true');
-                        props.navigation.goBack();
+                      
                     } catch (error) {
+                        console.log('Exception' + error.test);
+                    }
+
+                   
+                }
+               
+            })
+            .catch(error => {
+                console.log('error>>>>>' + error);
+                setloader(false);
+                ToastAndroid.show("getting error!", ToastAndroid.SHORT);
+            });
+    };
+    const UploadVideoURL = async (requestdata) => {
+        const client = await loggedInClient();
+        const request_data = {
+            client_user:'1',
+            video_url:  requestdata.url+requestdata.fields.key,
+
+
+        };
+        console.log('Exception' +JSON.stringify(request_data));
+        client.post(APIName.create_video_kyc, request_data)
+            .then(response => {
+                if (response.status == 200) {
+                    let data = response.data;
+                    console.log('Exception' +JSON.stringify(data));
+                    try {
+                     
+
+                    } catch (error) {
+                        console.log('Exception' + error.test);
+                    }
+
+                   
+                } else if (response.status == 201) {
+                    let data = response.data;
+                    console.log('Exception' +JSON.stringify(data));
+                    try {
+                        storeVideo('true')
+                        
+                      
+                    } catch (error) {
+                        ToastAndroid.show("getting error!", ToastAndroid.SHORT);
                         console.log('Exception' + error.test);
                     }
 
@@ -146,7 +223,7 @@ const VideoKYC = props => {
     };
     return (
         <>
-            {getloader ? <View style={styles.progress_container}>
+            {getprogress ? <View style={styles.progress_container}>
                 <Text >Loading....</Text>
                 <View style={[styles.progressBar, { backgroundColor: count >= 100 ? 'transparent' : colors.DARK_GRAY }]}>
                     <ProgressBarAnimated
@@ -157,7 +234,8 @@ const VideoKYC = props => {
                         onComplete={() => {
                             if (count >= 100) {
                                 setCount(100);
-                                clearInterval(countInterval);
+                                ToastAndroid.show("Video Updated successfully!", ToastAndroid.SHORT);
+                                props.navigation.goBack();
                             }
 
                         }}
@@ -347,12 +425,12 @@ const VideoKYC = props => {
 
                             onPress={() => {
                                 console.log('only check');
-                                // setloader(true);
+                                setloader(true);
+                                GetVideoURL();
+                                // 
                                 //UploadVideo();
-                                uploadUsingPresignedUrl('https://apidev.redcliffelabs.com/api/v1/ppmc/get-presigned-s3/', data);
+                               // uploadUsingPresignedUrl('https://apidev.redcliffelabs.com/api/v1/ppmc/get-presigned-s3/', data);
                             }}>
-
-
                             <Text
                                 style={{
                                     color: colors.WHITE_COLOR,
@@ -363,12 +441,12 @@ const VideoKYC = props => {
 
 
                         </TouchableOpacity>
-                        {/* {getloader ?
+                        {getloader ?
                             <Spinner
                                 visible={true}
                                 textContent={'Loading...'}
                                 textStyle={styles.spinnerTextStyle}
-                            /> : null} */}
+                            /> : null}
                     </View>
                 </View>
 
