@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "633054019343",
+    "project_id": "redcliffelabs-backend",
+    "storage_bucket": "redcliffelabs-backend.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:633054019343:android:7d7fb85413f2b05815487a",
+        "android_client_info": {
+          "package_name": "com.redcliffelabs"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "633054019343-9l4ejd4chqgdkhqfht7s13g8fv9tnlqv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.redcliffelabs",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "633054019343-ngc42pkkdejk5lallkdftp0pnsndmlnq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.redcliffelabs",
+            "certificate_hash": "c0f94893d4c93bc796d8cf99d8c53109a6bb9a50"
+          }
+        },
+        {
+          "client_id": "633054019343-jjkg4fit6if31cokqhrecnguari9s3d5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiEsL5x0EM36C6UdP52mEaJbrvcSGQu0c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "633054019343-jjkg4fit6if31cokqhrecnguari9s3d5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

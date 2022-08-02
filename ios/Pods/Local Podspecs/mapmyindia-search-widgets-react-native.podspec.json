@@ -1,0 +1,36 @@
+{
+  "name": "mapmyindia-search-widgets-react-native",
+  "version": "0.1.4",
+  "summary": "TODO",
+  "description": "react-native-mapmyindia-react-native-place-picker",
+  "homepage": "https://github.com/github_account/react-native-mapmyindia-react-native-place-picker",
+  "license": "MIT",
+  "authors": {
+    "Your Name": "yourname@email.com"
+  },
+  "platforms": {
+    "ios": "9.0"
+  },
+  "source": {
+    "git": "https://github.com/github_account/react-native-mapmyindia-react-native-place-picker.git",
+    "tag": "0.1.4"
+  },
+  "swift_versions": "5.2",
+  "source_files": "ios/**/*.{h,c,m,swift}",
+  "requires_arc": true,
+  "dependencies": {
+    "React": [
+
+    ],
+    "MapmyIndiaUIWidgets/Base": [
+      "~> 0.3.10"
+    ],
+    "MapmyIndiaMaps/Base": [
+
+    ],
+    "MapmyIndiaAPIKit": [
+
+    ]
+  },
+  "swift_version": "5.2"
+}

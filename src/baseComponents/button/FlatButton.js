@@ -1,0 +1,45 @@
+import PropTypes from 'prop-types';
+import React from 'react';
+import { View, TouchableOpacity, Keyboard } from 'react-native';
+import { create } from '../../helpers/PlatformSpecificStyles';
+import Text from '../../baseComponents/text/Text';
+import ButtonStyles from './ButtonStyles';
+
+const FlatButton = (props) => {
+    const handleOnPress =(returnValue)=> {
+        Keyboard.dismiss();
+        props.onPress(returnValue);
+    };
+    const buttonStyle = [styles.flatButton];
+    props.style && buttonStyle.push(props.style);
+    props.disabled && buttonStyle.push(styles.flatButtonDisabled);
+
+    return (
+        <TouchableOpacity style={styles.flatButtonWrapper}
+            onPress={()=>handleOnPress(props.returnValue)}
+            disabled={props.disabled}
+            accessibilityTraits="button"
+            accessibilityComponentType="button"
+            accessibilityLabel={props.text}
+            accessible>
+            <View testID={props.testID}>
+                <Text style={buttonStyle}
+                    testID={props.testID}>
+                    {props.text}
+                </Text>
+            </View>
+        </TouchableOpacity>
+    );
+};
+
+const styles = create(ButtonStyles);
+
+FlatButton.propTypes = {
+    disabled: PropTypes.bool,
+    onPress: PropTypes.func,
+    testID: PropTypes.string,
+    text: PropTypes.string,
+    returnValue: PropTypes.string
+};
+
+export default FlatButton;

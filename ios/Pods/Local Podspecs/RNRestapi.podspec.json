@@ -1,0 +1,25 @@
+{
+  "name": "RNRestapi",
+  "version": "1.0.0",
+  "summary": "RNRestapi",
+  "description": "RNRestapi",
+  "homepage": "https://github.com/MapmyIndia/mapmyindia-restapi-react-native-beta#readme",
+  "license": "MIT",
+  "authors": {
+    "author": "author@domain.cn"
+  },
+  "platforms": {
+    "ios": "9.0"
+  },
+  "source": {
+    "git": "https://github.com/author/RNRestapi.git",
+    "tag": "master"
+  },
+  "source_files": "ios/RNRestapi/**/*.{h,m}",
+  "requires_arc": true,
+  "dependencies": {
+    "React": [
+
+    ]
+  }
+}

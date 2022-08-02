@@ -1,0 +1,18 @@
+com/redcliffelabs_customerapp/NotificationService.java
+ com.redcliffelabs.NotificationService
+com/redcliffelabs_customerapp/MainApplication.java
+ com.redcliffelabs.MainApplication
+ com.redcliffelabs.MainApplication$1
+com/redcliffelabs/BuildConfig.java
+ com.redcliffelabs.BuildConfig
+com/redcliffelabs_customerapp/MainActivity.java
+ com.redcliffelabs.MainActivity
+com/redcliffelabs_customerapp/ReactNativeFlipper.java
+ com.redcliffelabs.ReactNativeFlipper
+ com.redcliffelabs.ReactNativeFlipper$1
+ com.redcliffelabs.ReactNativeFlipper$2
+ com.redcliffelabs.ReactNativeFlipper$2$1
+com/facebook/react/PackageList.java
+ com.facebook.react.PackageList
+com/redcliffelabs_customerapp/SplashActivity.java
+ com.redcliffelabs.SplashActivity

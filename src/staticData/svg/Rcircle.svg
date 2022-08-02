@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="231.742" height="231.742" viewBox="0 0 231.742 231.742">
+  <defs>
+    <filter id="Path_37" x="0" y="0" width="231.742" height="231.742" filterUnits="userSpaceOnUse">
+      <feOffset dx="-20" dy="20" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="30" result="blur"/>
+      <feFlood flood-color="#fb5951" flood-opacity="0.192"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Group_9264" data-name="Group 9264" transform="translate(-96.795 -78)">
+    <path id="Path_36" data-name="Path 36" d="M0,0A44.609,44.609,0,0,1,44.609,44.609,44.609,44.609,0,0,1,0,89.218" transform="translate(207.609 244.219) rotate(180)" fill="none" stroke="#f89751" stroke-width="14"/>
+    <path id="Path_39" data-name="Path 39" d="M0,0A44.672,44.672,0,0,1,33.99,15.649" transform="translate(251.999 199.609) rotate(90)" fill="none" stroke="#333" stroke-width="14"/>
+    <path id="Path_40" data-name="Path 40" d="M0,0A44.566,44.566,0,0,1,10.7,29.073" transform="translate(236.463 233.514) rotate(90)" fill="none" stroke="#39ab41" stroke-width="14"/>
+    <g transform="matrix(1, 0, 0, 1, 96.8, 78)" filter="url(#Path_37)">
+      <path id="Path_37-2" data-name="Path 37" d="M90,0a44.742,44.742,0,0,1,44.742,44.742" transform="translate(20 77)" fill="none" stroke="#f85951" stroke-width="14"/>
+    </g>
+    <text id="Goals_Reached" data-name="Goals Reached" transform="translate(187.632 214)" fill="#2e2e2e" font-size="7" font-family="Jost-Medium, Jost" font-weight="500" opacity="0.6"><tspan x="0" y="0">Goals Reached</tspan></text>
+    <text id="Steps" transform="translate(199 183.371)" fill="#353333" font-size="7" font-family="Jost-Medium, Jost" font-weight="500" opacity="0.6"><tspan x="0" y="0">Steps</tspan></text>
+    <text id="_5000" data-name="5000" transform="translate(193 199.371)" fill="#3aaa41" font-size="12" font-family="Jost-Medium, Jost" font-weight="500" opacity="0.6"><tspan x="0" y="0">5000</tspan></text>
+  </g>
+</svg>
